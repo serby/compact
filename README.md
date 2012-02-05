@@ -1,5 +1,7 @@
 # compact.js - A simple JavaScript and CSS compacting middleware for express
 
+[![build status](https://secure.travis-ci.org/serby/compact.png)](http://travis-ci.org/serby/compact)
+
 ## Installation
 
       npm install compact
@@ -69,7 +71,7 @@ You also have access to the **compactJs()** helper which will return an array
 of files for you to include on the page.
 
 ## Credits
-[Paul Serby](https://github.com/serby/)
+[Paul Serby](https://github.com/serby/) follow me on [twitter](http://twitter.com/PabloSerbo)
 
 ## Licence
 Licenced under the [New BSD License](http://opensource.org/licenses/bsd-license.php)
