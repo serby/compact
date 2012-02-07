@@ -47,10 +47,10 @@ app.get('/blog', compact.js(['comments', 'profile']));
 
 ```
 
-Then in the view use the **compactJsHtml()** view helper
+Then in the view use the **compactJsHtml()** view helper in your jade
 
 ```html
-#{compactJsHtml()}
+!=compactJsHtml()
 ```
 On / you'd get the following
 
