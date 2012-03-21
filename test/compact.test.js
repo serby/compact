@@ -1,4 +1,5 @@
-var fs = require('fs')
+var path = require('path')
+  , fs = require('fs')
   , mkdirp = require('mkdirp')
   , async = require('asyncjs');
 
@@ -27,10 +28,9 @@ describe('compact.js', function() {
       }).should.throw('Invalid source path \'invalid src path\'');
     });
 
-    it('should error with invalid destination path', function() {
-      (function() {
-        var compact = require('../../compact').createCompact(srcPath, 'invalid dest path');
-      }).should.throw('Invalid destination path \'invalid dest path\'');
+    it('should create a missing invalid destination path', function() {
+      var compact = require('../../compact').createCompact(srcPath, './invalid-dest');
+      path.existsSync('./invalid-dest').should.equal(true);
     });
 
     it('should succeed with valid paths', function() {
