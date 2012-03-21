@@ -2,7 +2,7 @@
   "author": "Paul Serby <paul@serby.net>",
   "name": "compact",
   "description": "A JavaScript and CSS compacting middleware for express",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "git://github.com/serby/compact.git"
@@ -17,12 +17,12 @@
   "dependencies": {
     "underscore": "~1.3",
     "async": "~0.1",
-    "uglify-js": "~1.2"
+    "uglify-js": "~1.2",
+    "mkdirp": "~0.3"
   },
   "devDependencies": {
     "mocha": "*",
     "should": "*",
-    "mkdirp": "~0.3",
     "async": "~0.1",
     "asyncjs": "~0.0"
   }
