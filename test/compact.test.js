@@ -3,7 +3,6 @@ var path = require('path')
   , mkdirp = require('mkdirp')
   , async = require('asyncjs');
 
-
 var srcPath = __dirname + '/assets'
   , destPath = __dirname + '/tmp';
 
@@ -29,8 +28,8 @@ describe('compact.js', function() {
     });
 
     it('should create a missing invalid destination path', function() {
-      var compact = require('../../compact').createCompact(srcPath, './invalid-dest');
-      path.existsSync('./invalid-dest').should.equal(true);
+      var compact = require('../../compact').createCompact(srcPath, destPath + '/invalid-dest');
+      path.existsSync(destPath + '/invalid-dest').should.equal(true);
     });
 
     it('should succeed with valid paths', function() {
