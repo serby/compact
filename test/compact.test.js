@@ -23,18 +23,18 @@ describe('compact.js', function() {
 
     it('should error with invalid source path', function() {
       (function() {
-        var compact = require('../../compact').createCompact('invalid src path');
+        var compact = require('../../compact').createCompact({ srcPath: 'invalid src path' });
       }).should.throw('Invalid source path \'invalid src path\'');
     });
 
     it('should create a missing invalid destination path', function() {
-      var compact = require('../../compact').createCompact(srcPath, destPath + '/invalid-dest');
+      var compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath + '/invalid-dest' });
       path.existsSync(destPath + '/invalid-dest').should.equal(true);
     });
 
     it('should succeed with valid paths', function() {
       require('../../compact')
-        .createCompact(srcPath, destPath).should.be.a('object');
+        .createCompact({ srcPath: srcPath, destPath: destPath }).should.be.a('object');
     });
   });
 
@@ -42,7 +42,7 @@ describe('compact.js', function() {
     var compact;
 
     beforeEach(function() {
-      compact = require('../../compact').createCompact(srcPath, destPath);
+      compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath });
     });
 
     it('should fail on null', function() {
@@ -62,7 +62,7 @@ describe('compact.js', function() {
       , compact;
 
     beforeEach(function() {
-      compact = require('../../compact').createCompact(srcPath, destPath);
+      compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath });
       namespace = compact.addNamespace('global');
     });
 
@@ -107,7 +107,7 @@ describe('compact.js', function() {
       , compact;
 
     beforeEach(function() {
-      compact = require('../../compact').createCompact(srcPath, destPath);
+      compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath });
     });
 
     it('should error without parameter', function() {
