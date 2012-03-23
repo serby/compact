@@ -10,11 +10,12 @@
 
 ```js
 
-var compact = require('compact').createCompact(
-__dirname + '/public/src/',
-__dirname + '/public/compact/',
-  '/js/compact/'
-);
+var compact = require('compact').createCompact({
+	srcPath: __dirname + '/public/src/',
+	destPath: __dirname + '/public/compact/',
+  webPath: '/js/compact/',
+  debug: false
+});
 
 compact.addNamespace('global');
 
@@ -30,7 +31,7 @@ compact.addNamespace('home')
 compact.addNamespace('profile')
 	.addJs('/js/profile.js');
 
-compact.addNamespace('comments')
+compact.addNamespace('comments',  __dirname + 'libs/comments/public/src/' )
 	.addJs('/js/paging.js');
 	.addJs('/js/comments.js');
 
