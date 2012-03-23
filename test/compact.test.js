@@ -121,6 +121,30 @@ describe('compact.js', function() {
       compact.js([]).should.be.a('function');
     });
 
+    it('should not compress and concat files in debug mode', function(done) {
+      var compactDebug = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath, debug: true });
+
+      compactDebug.addNamespace('global')
+        .addJs('/a.js')
+        .addJs('/b.js');
+
+       var
+        req = {
+          app: {
+            helpers: function(helper) {
+              helper.compactJs().should.eql(['/a.js', '/b.js']);
+              done();
+            },
+            configure: function(fn) {
+              fn();
+            }
+          }
+        }
+        , res;
+
+      compactDebug.js(['global'])(req, res, function() {});
+    });
+
     it('should create a helper when given valid input for a single namespace', function(done) {
       compact.addNamespace('global')
       .addJs('/a.js')
@@ -143,7 +167,7 @@ describe('compact.js', function() {
       compact.js(['global'])(req, res, function() {});
     });
 
-    it('should have a correct helper when given valid input for multiple namespaces', function(done) {
+    it('should create the correct helpers when given valid multiple namespaces', function(done) {
 
       compact.addNamespace('global')
         .addJs('/a.js')
@@ -167,6 +191,36 @@ describe('compact.js', function() {
         , res;
 
       compact.js(['global', 'profile'])(req, res, function() {});
+    });
+
+
+    it('should create the correct helpers when given valid multiple namespaces in debug mode', function(done) {
+
+      var compactDebug = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath, debug: true });
+
+
+      compactDebug.addNamespace('global')
+        .addJs('/a.js')
+        .addJs('/b.js');
+
+        compactDebug.addNamespace('profile')
+        .addJs('/c.js');
+
+      var
+        req = {
+          app: {
+            helpers: function(helper) {
+              helper.compactJs().should.eql(['/a.js', '/b.js', '/c.js']);
+              done();
+            },
+            configure: function(fn) {
+              fn();
+            }
+          }
+        }
+        , res;
+
+      compactDebug.js(['global', 'profile'])(req, res, function() {});
     });
 
     it('should have a correct helper when given valid input for multiple groups', function(done) {
