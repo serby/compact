@@ -4,7 +4,8 @@ var path = require('path')
   , async = require('asyncjs');
 
 var srcPath = __dirname + '/assets'
-  , destPath = __dirname + '/tmp';
+  , destPath = __dirname + '/tmp'
+  , altPath = __dirname + '/assets-alt';
 
 function createFiles(done) {
   mkdirp(destPath, done);
@@ -54,6 +55,28 @@ describe('compact.js', function() {
     it('should succeed with valid namespace', function() {
       compact.addNamespace('global').addJs.should.be.a('function');
     });
+
+    it('should add a source path to the lookup chain when given', function () {
+
+      compact.addNamespace('alternative', altPath);
+
+      // Lookup item in added path
+      (function () {
+        compact.ns.alternative.addJs('d.js');
+      }).should.not.throw();
+
+      // Lookup item in default path
+      (function () {
+        compact.ns.alternative.addJs('a.js');
+      }).should.not.throw();
+
+      // Lookup item that doesn't exist in either path
+      (function () {
+        compact.ns.alternative.addJs('xyz.js');
+      }).should.throw('Unable to find \'xyz.js\'');
+
+    });
+
   });
 
   describe('Namespace', function() {
