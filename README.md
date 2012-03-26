@@ -1,59 +1,102 @@
-# compact.js - A simple JavaScript and CSS compacting middleware for express
+# compact.js
+A simple JavaScript compacting middleware for express
 
 [![build status](https://secure.travis-ci.org/serby/compact.png)](http://travis-ci.org/serby/compact)
 
 ## Installation
 
-      npm install compact
+    npm install compact
 
 ## Usage
 
-```js
+### Initialise compact:
 
+```js
 var compact = require('compact').createCompact({
-	srcPath: __dirname + '/public/src/',
-	destPath: __dirname + '/public/compact/',
+  srcPath: __dirname + '/public/src/',
+  destPath: __dirname + '/public/compact/',
   webPath: '/js/compact/',
   debug: false
 });
+```
 
+- `srcPath` is the path to your frontend JavaScript. (If you initialised your project with Express' quick start, you probably want to set this to `/public/javascripts`).
+- `destPath` is the path that compact should use to store the compacted assets.
+  If this directory does not exist, it will be created.
+- `webPath` is the public public facing route to your `destPath` (This will preceed the filename of the output `<script>` tags, so `webPath: '/js/compact/' -> <script src="/js/compact/myscript.js">`).
+- `debug` is optional. If set to true, the scripts will not be concatenated or minified.
+
+### Create namespaces:
+
+Namespaces are used to create different compilations of scripts. Usually, you will want to create a `global` namespace that is used everywhere:
+
+```js
 compact.addNamespace('global');
 
 compact.ns.global
-	.addJs('/js/main.js')
-	.addJs('/js/widget-a.js')
-	.addJs('/js/widget-b.js');
+  .addJs('/js/main.js')
+  .addJs('/js/widget-a.js')
+  .addJs('/js/widget-b.js');
+```
 
+If you have some collection of scripts that will only be used on certain pages, it is a good idea to create a namespace for it. For example, if you have a banner and some ads that only appear on the homepage, and some UI that appears only on the profile page/section:
+
+```js
 compact.addNamespace('home')
-	.addJs('/js/banner.js')
-	.addJs('/js/ads.js');
+  .addJs('/js/banner.js')
+  .addJs('/js/ads.js');
 
 compact.addNamespace('profile')
-	.addJs('/js/profile.js');
+  .addJs('/js/profile.js');
+```
 
+When creating a namespace, you can also pass in an extra `srcPath`. Calls to `addJs()` will look for the file in the given `srcPath`, and if not found it then tries the `srcPath` passed to `createCompact()`.
+
+```js
 compact.addNamespace('comments',  __dirname + 'libs/comments/public/src/' )
-	.addJs('/js/paging.js');
-	.addJs('/js/comments.js');
+  .addJs('/js/paging.js')
+  .addJs('/js/comments.js');
+```
 
-// All routes will have global
-app.use(compact.js(['global']))
+### Using the middleware:
 
+If you have created a `global` namespace, apply it to all routes like so:
+
+```js
+app.use(compact.js(['global']));
+```
+
+This will expose the view helper `compactJsHtml()` in your templates, so you can output the necessary `<script>` tags.
+
+Selectively apply namespaces to routes:
+
+```js
 // Add some compacted JavaScript for just this route. Having the namespaces
 // in separate arrays will produce a javascript file per array.
 app.get('/', compact.js(['home'], ['profile']));
+app.get('/', function (req, res) {
+  /* Homepage logic here */
+});
 
-// Having different namespaces joined together will combine and output as one
-// javascript file.
+// Having different namespaces joined together
+// will combine and output as one javascript file.
 app.get('/blog', compact.js(['comments', 'profile']));
-
+app.get('/', function (req, res) {
+  /* Blog page logic here */
+});
 ```
 
-Then in the view use the **compactJsHtml()** view helper in your jade
+Note: compact must be applied to your route *before* the route logic. This is so that the view helper is available when you try to render your layout.
+
+### Rendering
+
+Any route that has `compact.js()` applied will have the helper function `compactJsHtml()` available. This will render the relevant script tags. In Jade, Use like so:
 
 ```html
 !=compactJsHtml()
 ```
-On / you'd get the following
+
+From the examples above, on `/` you'd get the following
 
 ```html
 <script src="/js/compact/global.js"></script>
@@ -61,15 +104,15 @@ On / you'd get the following
 <script src="/js/compact/profile.js"></script>
 ```
 
-On /blog you'd get this
+And on `/blog` you'd get this
 
 ```html
 <script src="/js/compact/global.js"></script>
 <script src="/js/compact/comment-profile.js"></script>
 ```
 
-You also have access to the **compactJs()** helper which will return an array
-of files for you to include on the page.
+You also have access to the `compactJs()` helper which will return an array
+of files instead of the rendered html.
 
 ## Credits
 [Paul Serby](https://github.com/serby/) follow me on [twitter](http://twitter.com/PabloSerbo)
