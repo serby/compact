@@ -127,10 +127,12 @@ describe('compact.js', function() {
   describe('#js()', function() {
 
     var namespace
-      , compact;
+      , compact
+      , compactDebug;
 
     beforeEach(function() {
       compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath });
+      compactDebug = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath, debug: true });
     });
 
     it('should error without parameter', function() {
@@ -145,7 +147,6 @@ describe('compact.js', function() {
     });
 
     it('should not compress and concat files in debug mode', function(done) {
-      var compactDebug = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath, debug: true });
 
       compactDebug.addNamespace('global')
         .addJs('/a.js')
@@ -188,6 +189,37 @@ describe('compact.js', function() {
         , res;
 
       compact.js(['global'])(req, res, function() {});
+    });
+
+    it('should add the files to the compacted file in the correct order', function(done) {
+
+      compactDebug.addNamespace('global')
+        .addJs('/large.js')
+        .addJs('/a.js')
+        .addJs('/b.js')
+        .addJs('/c.js');
+
+      var
+        req = {
+          app: {
+            helpers: function(helper) {
+              helper.compactJs().should.eql(['/large.js', '/a.js', '/b.js', '/c.js' ]);
+            },
+            configure: function(fn) {
+              fn();
+            }
+          }
+        }
+        , res;
+
+      compactDebug.js(['global'])(req, res, function() {
+
+        fs.readFile(destPath + '/global.js', function(error, data) {
+         // data.toString().should.equal('var a=1;a=10;var b=3,c=5');
+          done();
+        });
+      });
+
     });
 
     it('should create the correct helpers when given valid multiple namespaces', function(done) {
