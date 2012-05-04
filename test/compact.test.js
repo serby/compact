@@ -122,6 +122,16 @@ describe('compact.js', function() {
           .addJs('b.js');
       });
     });
+
+    describe('#addNamespace()', function () {
+      it('should not allow a namespace to be added more than once', function () {
+        (function () {
+          compact.addNamespace('foo');
+          compact.addNamespace('foo');
+        }).should.throw('The namespace \'foo\' has already been added');
+      });
+    });
+
   });
 
   describe('#js()', function() {
