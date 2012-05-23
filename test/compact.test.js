@@ -28,9 +28,12 @@ describe('compact.js', function() {
       }).should.throw('Invalid source path \'invalid src path\'');
     });
 
-    it('should create a missing invalid destination path', function() {
+    it('should create a missing invalid destination path', function(done) {
       var compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath + '/invalid-dest' });
-      path.existsSync(destPath + '/invalid-dest').should.equal(true);
+      setTimeout(function () {
+        path.existsSync(destPath + '/invalid-dest').should.equal(true);
+        done();
+      }, 10);
     });
 
     it('should succeed with valid paths', function() {
