@@ -169,7 +169,8 @@ describe('compact.js', function() {
         req = {
           app: {
             helpers: function(helper) {
-              helper.compactJs().should.eql(['/a.js', '/b.js']);
+              helper.compactJs()[0].should.match(/\-a.js$/);
+              helper.compactJs()[1].should.match(/\-b.js$/);
               done();
             },
             configure: function(fn) {
@@ -216,7 +217,11 @@ describe('compact.js', function() {
         req = {
           app: {
             helpers: function(helper) {
-              helper.compactJs().should.eql(['/large.js', '/a.js', '/b.js', '/c.js' ]);
+              var c = helper.compactJs();
+              c[0].should.match(/\-large.js$/);
+              c[1].should.match(/\-a.js$/);
+              c[2].should.match(/\-b.js$/);
+              c[3].should.match(/\-c.js$/);
             },
             configure: function(fn) {
               fn();
@@ -278,7 +283,10 @@ describe('compact.js', function() {
         req = {
           app: {
             helpers: function(helper) {
-              helper.compactJs().should.eql(['/a.js', '/b.js', '/c.js']);
+              var c = helper.compactJs();
+              c[0].should.match(/\-a.js$/);
+              c[1].should.match(/\-b.js$/);
+              c[2].should.match(/\-c.js$/);
               done();
             },
             configure: function(fn) {
@@ -387,9 +395,14 @@ describe('compact.js', function() {
 
     });
 
-    it('should differentiate between files with the same name from different locations', function (done) {
+    it('should differentiate between files with the same name from ' +
+      'different locations in different namespaces', function (done) {
 
-      var compactDebug = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath, debug: true });
+      var compactDebug = require('../../compact').createCompact({
+        srcPath: srcPath,
+        destPath: destPath,
+        debug: true
+      });
 
 
       compactDebug.addNamespace('global')
@@ -413,6 +426,38 @@ describe('compact.js', function() {
         , res;
 
       compactDebug.js(['global', 'alternative'])(req, res, function() {});
+
+    });
+
+    it('should differentiate between files with the same name from ' +
+      'different locations from the same namespace', function (done) {
+
+      var compactDebug = require('../../compact').createCompact({
+        srcPath: altPath,
+        destPath: destPath,
+        debug: true
+      });
+
+
+      compactDebug.addNamespace('global')
+        .addJs('/a.js')
+        .addJs('/x/a.js');
+
+      var
+        req = {
+          app: {
+            helpers: function(helper) {
+              helper.compactJs()[0].should.not.equal(helper.compactJs()[1]);
+              done();
+            },
+            configure: function(fn) {
+              fn();
+            }
+          }
+        }
+        , res;
+
+      compactDebug.js(['global'])(req, res, function() {});
 
     });
 
