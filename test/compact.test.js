@@ -86,6 +86,12 @@ describe('compact.js', function() {
       });
     });
 
+    describe('#addJadeWithSafeCompression', function() {
+      it('should succeed with in && out files === same data', function() {
+        namespace.addJs('a.jade', { mangle: false, no_mangle_functions: true });
+      });
+    });
+
     describe('#addNamespace()', function () {
       it('should not allow a namespace to be added more than once', function () {
         (function () {
