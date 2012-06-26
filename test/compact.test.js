@@ -42,46 +42,6 @@ describe('compact.js', function() {
     });
   });
 
-  describe('#addNamespace()', function() {
-    var compact;
-
-    beforeEach(function() {
-      compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath });
-    });
-
-    it('should fail on null', function() {
-      (function() {
-        compact.addNamespace(null);
-      }).should.throw('Invalid namespace');
-    });
-
-    it('should succeed with valid namespace', function() {
-      compact.addNamespace('global').addJs.should.be.a('function');
-    });
-
-    it('should add a source path to the lookup chain when given', function () {
-
-      compact.addNamespace('alternative', altPath);
-
-      // Lookup item in added path
-      (function () {
-        compact.ns.alternative.addJs('d.js');
-      }).should.not.throw();
-
-      // Lookup item in default path
-      (function () {
-        compact.ns.alternative.addJs('a.js');
-      }).should.not.throw();
-
-      // Lookup item that doesn't exist in either path
-      (function () {
-        compact.ns.alternative.addJs('xyz.js');
-      }).should.throw('Unable to find \'xyz.js\'');
-
-    });
-
-  });
-
   describe('Namespace', function() {
 
     var namespace
@@ -126,6 +86,12 @@ describe('compact.js', function() {
       });
     });
 
+    describe('#addJadeWithSafeCompression', function() {
+      it('should succeed with in && out files === same data', function() {
+        namespace.addJs('a.jade', { mangle: false, no_mangle_functions: true });
+      });
+    });
+
     describe('#addNamespace()', function () {
       it('should not allow a namespace to be added more than once', function () {
         (function () {
@@ -133,8 +99,44 @@ describe('compact.js', function() {
           compact.addNamespace('foo');
         }).should.throw('The namespace \'foo\' has already been added');
       });
-    });
+    
+      var compact;
 
+      beforeEach(function() {
+        compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath });
+      });
+
+      it('should fail on null', function() {
+        (function() {
+          compact.addNamespace(null);
+        }).should.throw('Invalid namespace');
+      });
+
+      it('should succeed with valid namespace', function() {
+        compact.addNamespace('global').addJs.should.be.a('function');
+      });
+
+      it('should add a source path to the lookup chain when given', function () {
+
+        compact.addNamespace('alternative', altPath);
+
+        // Lookup item in added path
+        (function () {
+          compact.ns.alternative.addJs('d.js');
+        }).should.not.throw();
+
+        // Lookup item in default path
+        (function () {
+          compact.ns.alternative.addJs('a.js');
+        }).should.not.throw();
+
+        // Lookup item that doesn't exist in either path
+        (function () {
+          compact.ns.alternative.addJs('xyz.js');
+        }).should.throw('Unable to find \'xyz.js\'');
+
+      });
+    });
   });
 
   describe('#js()', function() {
