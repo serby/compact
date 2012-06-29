@@ -99,7 +99,7 @@ describe('compact.js', function() {
           compact.addNamespace('foo');
         }).should.throw('The namespace \'foo\' has already been added');
       });
-    
+
       var compact;
 
       beforeEach(function() {
@@ -159,6 +159,29 @@ describe('compact.js', function() {
 
     it('should succeed with empty array as first parameter', function() {
       compact.js([]).should.be.a('function');
+    });
+
+
+    it('should succeed and return nothing if a namespace has no js files added', function(done) {
+      compact.addNamespace('global');
+      compact.js(['global']).should.be.a('function');
+
+       var
+        req = {
+          app: {
+            helpers: function(helper) {
+              helper.compactJs()[0].should.match(/\/global.js$/);
+              done();
+            },
+            configure: function(fn) {
+              fn();
+            }
+          }
+        }
+        , res;
+
+      compact.js(['global'])(req, res, function() {});
+
     });
 
     it('should not compress and concat files in debug mode', function(done) {
