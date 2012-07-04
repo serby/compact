@@ -500,7 +500,7 @@ describe('compact.js', function() {
         req = {
           app: {
             helpers: function(helper) {
-              fs.readFileSync(destPath + '/0b93b4310e-tmp.js').toString().should.equal(results[i++]);
+              fs.readFileSync(destPath + helper.compactJs()[0]).toString().should.equal(results[i++]);
             },
             configure: function(fn) {
               fn();
