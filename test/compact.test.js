@@ -256,11 +256,7 @@ describe('compact.js', function() {
         , res;
 
       compactDebug.js(['global'])(req, res, function() {
-
-        fs.readFile(destPath + '/global.js', function(error, data) {
-         // data.toString().should.equal('var a=1;a=10;var b=3,c=5');
-          done();
-        });
+        done();
       });
 
     });
@@ -485,6 +481,43 @@ describe('compact.js', function() {
       compactDebug.js(['global'])(req, res, function() {});
 
     });
+
+
+    it('should not cache namespace when in debug mode', function (done) {
+
+      var content = 'var test = 1';
+      fs.writeFileSync(srcPath + '/tmp.js', content);
+
+      compactDebug.addNamespace('global')
+        .addJs('/tmp.js')
+        ;
+
+
+
+      var
+        results = [content, ''],
+        i = 0,
+        req = {
+          app: {
+            helpers: function(helper) {
+              fs.readFileSync(destPath + '/0b93b4310e-tmp.js').toString().should.equal(results[i++]);
+            },
+            configure: function(fn) {
+              fn();
+            }
+
+          }
+        }
+        , res;
+
+      compactDebug.js(['global'])(req, res, function() {
+        fs.unlinkSync(srcPath + '/tmp.js');
+        compactDebug.js(['global'])(req, res, function() {
+          done();
+        });
+      });
+    });
+
 
   });
 });
