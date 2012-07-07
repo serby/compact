@@ -139,7 +139,7 @@ describe('compact.js', function() {
     });
   });
 
-  describe('#js()', function() {
+  describe('#middleware()', function() {
 
     var namespace
       , compact
@@ -152,35 +152,29 @@ describe('compact.js', function() {
 
     it('should error without parameter', function() {
       (function() {
-        compact.js();
+        compact.middleware();
       }).should.throw('You must pass one or more arrays containing valid namespace names');
 
     });
 
     it('should succeed with empty array as first parameter', function() {
-      compact.js([]).should.be.a('function');
+      compact.middleware([]).should.be.a('function');
     });
 
 
     it('should succeed and return nothing if a namespace has no js files added', function(done) {
       compact.addNamespace('global');
-      compact.js(['global']).should.be.a('function');
+      compact.middleware(['global']).should.be.a('function');
 
-       var
-        req = {
-          app: {
-            helpers: function(helper) {
+       var req
+        , res = {
+            locals: function(helper) {
               helper.compactJs()[0].should.match(/\/global.js$/);
               done();
-            },
-            configure: function(fn) {
-              fn();
             }
-          }
-        }
-        , res;
+          };
 
-      compact.js(['global'])(req, res, function() {});
+      compact.middleware(['global'])(req, res, function() {});
 
     });
 
@@ -190,22 +184,16 @@ describe('compact.js', function() {
         .addJs('/a.js')
         .addJs('/b.js');
 
-       var
-        req = {
-          app: {
-            helpers: function(helper) {
+      var req
+        , res = {
+            locals: function(helper) {
               helper.compactJs()[0].should.match(/\-a.js$/);
               helper.compactJs()[1].should.match(/\-b.js$/);
               done();
-            },
-            configure: function(fn) {
-              fn();
             }
-          }
-        }
-        , res;
+          };
 
-      compactDebug.js(['global'])(req, res, function() {});
+      compactDebug.middleware(['global'])(req, res, function() {});
     });
 
     it('should create a helper when given valid input for a single namespace', function(done) {
@@ -213,21 +201,15 @@ describe('compact.js', function() {
       .addJs('/a.js')
       .addJs('/b.js');
 
-      var
-        req = {
-          app: {
-            helpers: function(helper) {
+      var req
+        , res = {
+            locals: function(helper) {
               helper.compactJs().should.eql(['/global.js']);
               done();
-            },
-            configure: function(fn) {
-              fn();
             }
-          }
-        }
-        , res;
+          };
 
-      compact.js(['global'])(req, res, function() {});
+      compact.middleware(['global'])(req, res, function() {});
     });
 
     it('should add the files to the compacted file in the correct order', function(done) {
@@ -238,24 +220,18 @@ describe('compact.js', function() {
         .addJs('/b.js')
         .addJs('/c.js');
 
-      var
-        req = {
-          app: {
-            helpers: function(helper) {
-              var c = helper.compactJs();
-              c[0].should.match(/\-large.js$/);
-              c[1].should.match(/\-a.js$/);
-              c[2].should.match(/\-b.js$/);
-              c[3].should.match(/\-c.js$/);
-            },
-            configure: function(fn) {
-              fn();
-            }
+      var req
+        , res = {
+          locals: function(helper) {
+            var c = helper.compactJs();
+            c[0].should.match(/\-large.js$/);
+            c[1].should.match(/\-a.js$/);
+            c[2].should.match(/\-b.js$/);
+            c[3].should.match(/\-c.js$/);
           }
-        }
-        , res;
+        };
 
-      compactDebug.js(['global'])(req, res, function() {
+      compactDebug.middleware(['global'])(req, res, function() {
         done();
       });
 
@@ -270,21 +246,15 @@ describe('compact.js', function() {
         compact.addNamespace('profile')
         .addJs('/c.js');
 
-      var
-        req = {
-          app: {
-            helpers: function(helper) {
-              helper.compactJs().should.eql(['/global-profile.js']);
-              done();
-            },
-            configure: function(fn) {
-              fn();
-            }
+      var req
+        , res = {
+          locals: function(helper) {
+            helper.compactJs().should.eql(['/global-profile.js']);
+            done();
           }
-        }
-        , res;
+        };
 
-      compact.js(['global', 'profile'])(req, res, function() {});
+      compact.middleware(['global', 'profile'])(req, res, function() {});
     });
 
 
@@ -300,24 +270,18 @@ describe('compact.js', function() {
         compactDebug.addNamespace('profile')
         .addJs('/c.js');
 
-      var
-        req = {
-          app: {
-            helpers: function(helper) {
-              var c = helper.compactJs();
-              c[0].should.match(/\-a.js$/);
-              c[1].should.match(/\-b.js$/);
-              c[2].should.match(/\-c.js$/);
-              done();
-            },
-            configure: function(fn) {
-              fn();
-            }
+      var req
+        , res = {
+          locals: function(helper) {
+            var c = helper.compactJs();
+            c[0].should.match(/\-a.js$/);
+            c[1].should.match(/\-b.js$/);
+            c[2].should.match(/\-c.js$/);
+            done();
           }
-        }
-        , res;
+        };
 
-      compactDebug.js(['global', 'profile'])(req, res, function() {});
+      compactDebug.middleware(['global', 'profile'])(req, res, function() {});
     });
 
     it('should have a correct helper when given valid input for multiple groups', function(done) {
@@ -331,21 +295,15 @@ describe('compact.js', function() {
         compact.addNamespace('profile')
         .addJs('/c.js');
 
-      var
-        req = {
-          app: {
-            helpers: function(helper) {
-              helper.compactJs().should.eql(['/global-profile.js', '/blog.js']);
-              done();
-            },
-            configure: function(fn) {
-              fn();
-            }
+      var req
+        , res = {
+          locals: function(helper) {
+            helper.compactJs().should.eql(['/global-profile.js', '/blog.js']);
+            done();
           }
-        }
-        , res;
+        };
 
-      compact.js(['global', 'profile'], ['blog'])(req, res, function() {});
+      compact.middleware(['global', 'profile'], ['blog'])(req, res, function() {});
     });
 
     it('should returned the correct helpers', function(done) {
@@ -358,19 +316,12 @@ describe('compact.js', function() {
       compact.addNamespace('profile')
         .addJs('/b.js');
 
-      var
-        doneCount = 0,
-        app = {
-          helpers: null,
-          configure: function(fn) {
-            fn();
-          }
-        },
-        res,
-        globalReq = { app: app },
-        profileReq = { app: app };
+      var doneCount = 0
+        , req
+        , globalRes = {}
+        , profileRes = {};
 
-        globalReq.app.helpers = function(helper) {
+        globalRes.locals = function(helper) {
           helper.compactJs().should.eql(['/global.js']);
           doneCount += 1;
           if (doneCount === 2) {
@@ -378,15 +329,15 @@ describe('compact.js', function() {
           }
         };
 
-      compact.js(['global'])(globalReq, res, function() {
-        profileReq.app.helpers = function(helper) {
+      compact.middleware(['global'])(req, globalRes, function() {
+        profileRes.locals = function(helper) {
           helper.compactJs().should.eql(['/profile.js']);
           doneCount += 1;
           if (doneCount === 2) {
             done();
           }
         };
-        compact.js(['profile'])(profileReq, res, function() {});
+        compact.middleware(['profile'])(req, profileRes, function() {});
       });
 
 
@@ -397,14 +348,12 @@ describe('compact.js', function() {
       compact.addNamespace('alternative', altPath);
       compact.ns.alternative.addJs('a.js');
 
-      var app = {
-        helpers: function (helper) {},
-        configure: function(fn) {
-          fn();
-        }
-      };
+      var req
+        , res = {
+          locals: function (helper) {}
+        };
 
-      compact.js(['alternative'])({ app : app }, {}, function () {
+      compact.middleware(['alternative'])(req, res, function () {
 
         var compacted = fs.readFileSync(destPath + '/alternative.js', 'utf8')
           , raw = fs.readFileSync(altPath + '/a.js', 'utf8');
@@ -432,21 +381,15 @@ describe('compact.js', function() {
         compactDebug.addNamespace('alternative', altPath)
         .addJs('/a.js');
 
-      var
-        req = {
-          app: {
-            helpers: function(helper) {
-              helper.compactJs()[0].should.not.equal(helper.compactJs()[1]);
-              done();
-            },
-            configure: function(fn) {
-              fn();
-            }
+      var req
+        , res = {
+          locals: function(helper) {
+            helper.compactJs()[0].should.not.equal(helper.compactJs()[1]);
+            done();
           }
-        }
-        , res;
+        };
 
-      compactDebug.js(['global', 'alternative'])(req, res, function() {});
+      compactDebug.middleware(['global', 'alternative'])(req, res, function() {});
 
     });
 
@@ -464,21 +407,15 @@ describe('compact.js', function() {
         .addJs('/a.js')
         .addJs('/x/a.js');
 
-      var
-        req = {
-          app: {
-            helpers: function(helper) {
-              helper.compactJs()[0].should.not.equal(helper.compactJs()[1]);
-              done();
-            },
-            configure: function(fn) {
-              fn();
-            }
+      var req
+        , res = {
+          locals: function(helper) {
+            helper.compactJs()[0].should.not.equal(helper.compactJs()[1]);
+            done();
           }
-        }
-        , res;
+        };
 
-      compactDebug.js(['global'])(req, res, function() {});
+      compactDebug.middleware(['global'])(req, res, function() {});
 
     });
 
@@ -494,25 +431,18 @@ describe('compact.js', function() {
 
 
 
-      var
-        results = [content, ''],
-        i = 0,
-        req = {
-          app: {
-            helpers: function(helper) {
-              fs.readFileSync(destPath + helper.compactJs()[0]).toString().should.equal(results[i++]);
-            },
-            configure: function(fn) {
-              fn();
-            }
-
+      var results = [content, '']
+        , i = 0
+        , req
+        , res = {
+          locals: function(helper) {
+            fs.readFileSync(destPath + helper.compactJs()[0]).toString().should.equal(results[i++]);
           }
-        }
-        , res;
+        };
 
-      compactDebug.js(['global'])(req, res, function() {
+      compactDebug.middleware(['global'])(req, res, function() {
         fs.unlinkSync(srcPath + '/tmp.js');
-        compactDebug.js(['global'])(req, res, function() {
+        compactDebug.middleware(['global'])(req, res, function() {
           done();
         });
       });

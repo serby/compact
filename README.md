@@ -63,7 +63,7 @@ compact.addNamespace('comments',  __dirname + 'libs/comments/public/src/' )
 If you have created a `global` namespace, apply it to all routes like so:
 
 ```js
-app.use(compact.js(['global']));
+app.use(compact.middleware(['global']));
 ```
 
 This will expose the view helper `compactJsHtml()` in your templates, so you can output the necessary `<script>` tags.
@@ -73,17 +73,23 @@ Selectively apply namespaces to routes:
 ```js
 // Add some compacted JavaScript for just this route. Having the namespaces
 // in separate arrays will produce a javascript file per array.
-app.get('/', compact.js(['home'], ['profile']));
-app.get('/', function (req, res) {
+app.get(
+  '/',
+  compact.js(['home'], ['profile']),
+  function (req, res) {
   /* Homepage logic here */
-});
+  }
+);
 
 // Having different namespaces joined together
 // will combine and output as one javascript file.
-app.get('/blog', compact.js(['comments', 'profile']));
-app.get('/', function (req, res) {
-  /* Blog page logic here */
-});
+app.get(
+  '/',
+  compact.js(['comments', 'profile']),
+  function (req, res) {
+    /* Blog page logic here */
+  }
+);
 ```
 
 Note: compact must be applied to your route *before* the route logic. This is so that the view helper is available when you try to render your layout.
