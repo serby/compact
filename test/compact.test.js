@@ -40,26 +40,41 @@ describe('compact.js', function() {
       require('../../compact')
         .createCompact({ srcPath: srcPath, destPath: destPath }).should.be.a('object');
     });
-    
+
+  });
+
+  describe('#configure', function() {
+
+    it('should throw error if config not an object', function() {
+      var compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath });
+
+      (function() {
+        compact.configure([]);
+      }).should.throw();
+
+    });
+
     it('should parse javascript config paths and namespaces', function() {
       var config = {
         prepend: [
           'a.js'
         ],
-        
+
         append: [
           'b.js'
         ],
-        
+
         test: [
           'prepend',
           'c.js',
           'append'
         ]
-      };
-      var compact = require('../../compact').createCompact(null, null, config);
-      compact.ns['test'].should.be.a('object');
-      compact.ns['test'].javascriptFiles.length.should.equal(3);
+      },
+      compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath });
+
+      compact.configure(config);
+      compact.ns.test.should.be.a('object');
+      compact.ns.test.javascriptFiles.length.should.equal(3);
     });
   });
 
