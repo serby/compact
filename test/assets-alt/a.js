@@ -1,1 +1,1 @@
-console.log("hello from alt!")
+console.log("hello from alt!");

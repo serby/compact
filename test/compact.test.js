@@ -394,7 +394,7 @@ describe('compact.js', function() {
         var compacted = fs.readFileSync(destPath + '/alternative.js', 'utf8')
           , raw = fs.readFileSync(altPath + '/a.js', 'utf8');
 
-        compacted.should.equal(raw);
+        raw.should.equal(compacted + ';');
         done();
 
       });
