@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "should": "*",
+    "should": ">=0.6",
     "async": "~0.1",
     "asyncjs": "~0.0"
   }
