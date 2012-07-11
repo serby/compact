@@ -94,6 +94,36 @@ app.get(
 
 Note: compact must be applied to your route *before* the route logic. This is so that the view helper is available when you try to render your layout.
 
+### Bulk Config
+
+You can defined all the namespaces and js files in a JSON schema using the *configure* function.
+
+```js
+
+var compact = require('compact').createCompact(...);
+
+compact.configure({
+    prepend: [
+        '/config.js'
+    ],
+
+    append: [
+        '/garbageCollector.js'
+    ],
+
+    cmsSourcePath: '/public/vendor/cms/',
+    cms: [
+        'prepend',
+        '/myModel.js',
+        '/bootstrap.js',
+        'append'
+    ]
+});
+
+```
+
+In this example you can see that you can either reference a JavaScript file or an existing namespace.
+
 ### Rendering
 
 Any route that has `compact.js()` applied will have the helper function `compactJsHtml()` available. This will render the relevant script tags. In Jade, Use like so:
