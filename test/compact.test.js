@@ -24,7 +24,7 @@ describe('compact.js', function() {
     it('should error with invalid source path', function() {
       (function() {
         var compact = require('../../compact').createCompact({ srcPath: 'invalid src path' });
-      }).should.throw('Invalid source path \'invalid src path\'');
+      }).should.throwError('Invalid source path \'invalid src path\'');
     });
 
     it('should create a missing invalid destination path', function(done) {
@@ -44,12 +44,12 @@ describe('compact.js', function() {
 
   describe('#configure', function() {
 
-    it('should throw error if config not an object', function() {
+    it('should throwError error if config not an object', function() {
       var compact = require('../../compact').createCompact({ srcPath: srcPath, destPath: destPath });
 
       (function() {
         compact.configure([]);
-      }).should.throw();
+      }).should.throwError();
 
     });
 
@@ -97,7 +97,7 @@ describe('compact.js', function() {
         compact.ns.global.should = Object.prototype.should;
         (function() {
           compact.ns.global = {};
-        }).should.throw('You can not alter a registered namespace \'global\'');
+        }).should.throwError('You can not alter a registered namespace \'global\'');
 
       });
     });
@@ -132,7 +132,7 @@ describe('compact.js', function() {
         (function () {
           compact.addNamespace('foo');
           compact.addNamespace('foo');
-        }).should.throw('The namespace \'foo\' has already been added');
+        }).should.throwError('The namespace \'foo\' has already been added');
       });
 
       var compact;
@@ -144,7 +144,7 @@ describe('compact.js', function() {
       it('should fail on null', function() {
         (function() {
           compact.addNamespace(null);
-        }).should.throw('Invalid namespace');
+        }).should.throwError('Invalid namespace');
       });
 
       it('should succeed with valid namespace', function() {
@@ -158,17 +158,17 @@ describe('compact.js', function() {
         // Lookup item in added path
         (function () {
           compact.ns.alternative.addJs('d.js');
-        }).should.not.throw();
+        }).should.not.throwError();
 
         // Lookup item in default path
         (function () {
           compact.ns.alternative.addJs('a.js');
-        }).should.not.throw();
+        }).should.not.throwError();
 
         // Lookup item that doesn't exist in either path
         (function () {
           compact.ns.alternative.addJs('xyz.js');
-        }).should.throw('Unable to find \'xyz.js\'');
+        }).should.throwError('Unable to find \'xyz.js\'');
 
       });
     });
@@ -188,7 +188,7 @@ describe('compact.js', function() {
     it('should error without parameter', function() {
       (function() {
         compact.middleware();
-      }).should.throw('You must pass one or more arrays containing valid namespace names');
+      }).should.throwError('You must pass one or more arrays containing valid namespace names');
 
     });
 
