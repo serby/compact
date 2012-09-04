@@ -2,9 +2,9 @@ var fs = require('fs')
   , mkdirp = require('mkdirp')
   , async = require('asyncjs');
 
-var srcPath = __dirname + '/assets'
-  , destPath = __dirname + '/tmp'
-  , altPath = __dirname + '/assets-alt';
+var srcPath = __dirname + '/assets/'
+  , destPath = __dirname + '/tmp/'
+  , altPath = __dirname + '/assets-alt/';
 
 function createFiles(done) {
   mkdirp(destPath, done);
@@ -245,6 +245,44 @@ describe('compact.js', function() {
           };
 
       compact.middleware(['global'])(req, res, function() {});
+    });
+
+    it('should use webPath', function(done) {
+      var compactWebPath = require('../../compact').createCompact({
+        webPath: '/custom', srcPath: srcPath, destPath: destPath });
+
+      compactWebPath.addNamespace('global')
+      .addJs('/a.js')
+      .addJs('/b.js');
+
+      var req
+        , res = {
+            locals: function(helper) {
+              helper.compactJs().should.eql(['/custom/global.js']);
+              done();
+            }
+          };
+
+      compactWebPath.middleware(['global'])(req, res, function() {});
+    });
+
+    it('should use webPath and remove extra separators', function(done) {
+      var compactWebPath = require('../../compact').createCompact({
+        webPath: '/custom//', srcPath: srcPath, destPath: destPath });
+
+      compactWebPath.addNamespace('global')
+      .addJs('/a.js')
+      .addJs('/b.js');
+
+      var req
+        , res = {
+            locals: function(helper) {
+              helper.compactJs().should.eql(['/custom/global.js']);
+              done();
+            }
+          };
+
+      compactWebPath.middleware(['global'])(req, res, function() {});
     });
 
     it('should add the files to the compacted file in the correct order', function(done) {
