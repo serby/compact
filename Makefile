@@ -1,3 +1,4 @@
+default: test lint
 test:
 	@./node_modules/.bin/mocha \
 		-r should \
@@ -7,6 +8,7 @@ lint-changed:
 	@jshint `git status --porcelain | sed -e "s/^...//g"`
 
 lint:
+	@echo 'Linting code...'
 	@jshint lib test
 
 .PHONY: test lint lint-changed
