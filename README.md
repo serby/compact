@@ -60,13 +60,15 @@ compact.addNamespace('comments',  __dirname + 'libs/comments/public/src/' )
 
 ### Using the middleware:
 
-If you have created a `global` namespace, apply it to all routes like so:
+If you have created a `global` namespace, you can apply it to all routes like so:
 
 ```js
 app.use(compact.middleware(['global']));
 ```
 
-This will expose the view helper `compactJsHtml()` in your templates, so you can output the necessary `<script>` tags.
+This will expose the view helper `compactJsHtml()` in your templates, so you can output the necessary `<script>` tags. 
+
+**Note that this should appear after middleware for serving static assets.**
 
 Selectively apply namespaces to routes:
 
