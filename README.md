@@ -70,7 +70,9 @@ This will expose the view helper `compactJsHtml()` in your templates, so you can
 
 **Note that this should appear after middleware for serving static assets.**
 
-Selectively apply namespaces to routes:
+### Route Specific Middleware
+
+For most use cases you'll probably want to apply namespaces on a per route bases:
 
 ```js
 // Add some compacted JavaScript for just this route. Having the namespaces
