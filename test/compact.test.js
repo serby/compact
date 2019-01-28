@@ -201,15 +201,15 @@ describe('compact.js', function() {
       compact.addNamespace('global');
       compact.middleware(['global']).should.be.a('function');
 
-       var req
+      var req
         , res = {
-            locals: {
-              set compactJs(func) {
-                func()[0].should.match(/\/global.js$/);
-                done();
-              }
+          locals: {
+            set compactJs(func) {
+              func()[0].should.match(/\/global.js$/);
+              done();
             }
-          };
+          }
+        };
 
       compact.middleware(['global'])(req, res, function() {});
 
@@ -242,13 +242,13 @@ describe('compact.js', function() {
 
       var req
         , res = {
-            locals: {
-              set compactJs(func) {
-                func().should.eql(['/global.js']);
-                done();
-              }
+          locals: {
+            set compactJs(func) {
+              func().should.eql(['/global.js']);
+              done();
             }
-          };
+          }
+        };
 
       compact.middleware(['global'])(req, res, function() {});
     });
@@ -263,13 +263,13 @@ describe('compact.js', function() {
 
       var req
         , res = {
-            locals: {
-              set compactJs(func) {
-                func().should.eql(['/custom/global.js']);
-                done();
-              }
+          locals: {
+            set compactJs(func) {
+              func().should.eql(['/custom/global.js']);
+              done();
             }
-          };
+          }
+        };
 
       compactWebPath.middleware(['global'])(req, res, function() {});
     });
@@ -284,13 +284,13 @@ describe('compact.js', function() {
 
       var req
         , res = {
-            locals: {
-              set compactJs(func) {
-                func().should.eql(['/custom/global.js']);
-                done();
-              }
+          locals: {
+            set compactJs(func) {
+              func().should.eql(['/custom/global.js']);
+              done();
             }
-          };
+          }
+        };
 
       compactWebPath.middleware(['global'])(req, res, function() {});
     });
