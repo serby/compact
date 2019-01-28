@@ -201,13 +201,15 @@ describe('compact.js', function() {
       compact.addNamespace('global');
       compact.middleware(['global']).should.be.a('function');
 
-       var req
+      var req
         , res = {
-            locals: function(helper) {
-              helper.compactJs()[0].should.match(/\/global.js$/);
+          locals: {
+            set compactJs(func) {
+              func()[0].should.match(/\/global.js$/);
               done();
             }
-          };
+          }
+        };
 
       compact.middleware(['global'])(req, res, function() {});
 
@@ -221,12 +223,14 @@ describe('compact.js', function() {
 
       var req
         , res = {
-            locals: function(helper) {
-              helper.compactJs()[0].should.match(/\-a.js$/);
-              helper.compactJs()[1].should.match(/\-b.js$/);
+          locals: {
+            set compactJs(func) {
+              func()[0].should.match(/\-a.js$/);
+              func()[1].should.match(/\-b.js$/);
               done();
             }
-          };
+          }
+        };
 
       compactDebug.middleware(['global'])(req, res, function() {});
     });
@@ -238,11 +242,13 @@ describe('compact.js', function() {
 
       var req
         , res = {
-            locals: function(helper) {
-              helper.compactJs().should.eql(['/global.js']);
+          locals: {
+            set compactJs(func) {
+              func().should.eql(['/global.js']);
               done();
             }
-          };
+          }
+        };
 
       compact.middleware(['global'])(req, res, function() {});
     });
@@ -257,11 +263,13 @@ describe('compact.js', function() {
 
       var req
         , res = {
-            locals: function(helper) {
-              helper.compactJs().should.eql(['/custom/global.js']);
+          locals: {
+            set compactJs(func) {
+              func().should.eql(['/custom/global.js']);
               done();
             }
-          };
+          }
+        };
 
       compactWebPath.middleware(['global'])(req, res, function() {});
     });
@@ -276,11 +284,13 @@ describe('compact.js', function() {
 
       var req
         , res = {
-            locals: function(helper) {
-              helper.compactJs().should.eql(['/custom/global.js']);
+          locals: {
+            set compactJs(func) {
+              func().should.eql(['/custom/global.js']);
               done();
             }
-          };
+          }
+        };
 
       compactWebPath.middleware(['global'])(req, res, function() {});
     });
@@ -295,12 +305,14 @@ describe('compact.js', function() {
 
       var req
         , res = {
-          locals: function(helper) {
-            var c = helper.compactJs();
-            c[0].should.match(/\-large.js$/);
-            c[1].should.match(/\-a.js$/);
-            c[2].should.match(/\-b.js$/);
-            c[3].should.match(/\-c.js$/);
+          locals: {
+            set compactJs(func) {
+              var c = func();
+              c[0].should.match(/\-large.js$/);
+              c[1].should.match(/\-a.js$/);
+              c[2].should.match(/\-b.js$/);
+              c[3].should.match(/\-c.js$/);
+            }
           }
         };
 
@@ -321,9 +333,11 @@ describe('compact.js', function() {
 
       var req
         , res = {
-          locals: function(helper) {
-            helper.compactJs().should.eql(['/global-profile.js']);
-            done();
+          locals: {
+            set compactJs(func) {
+              func().should.eql(['/global-profile.js']);
+              done();
+            }
           }
         };
 
@@ -345,12 +359,14 @@ describe('compact.js', function() {
 
       var req
         , res = {
-          locals: function(helper) {
-            var c = helper.compactJs();
-            c[0].should.match(/\-a.js$/);
-            c[1].should.match(/\-b.js$/);
-            c[2].should.match(/\-c.js$/);
-            done();
+          locals: {
+            set compactJs(func) {
+              var c = func();
+              c[0].should.match(/\-a.js$/);
+              c[1].should.match(/\-b.js$/);
+              c[2].should.match(/\-c.js$/);
+              done();
+            }
           }
         };
 
@@ -370,9 +386,11 @@ describe('compact.js', function() {
 
       var req
         , res = {
-          locals: function(helper) {
-            helper.compactJs().should.eql(['/global-profile.js', '/blog.js']);
-            done();
+          locals: {
+            set compactJs(func) {
+              func().should.eql(['/global-profile.js', '/blog.js']);
+              done();
+            }
           }
         };
 
@@ -391,29 +409,32 @@ describe('compact.js', function() {
 
       var doneCount = 0
         , req
-        , globalRes = {}
-        , profileRes = {};
-
-        globalRes.locals = function(helper) {
-          helper.compactJs().should.eql(['/global.js']);
-          doneCount += 1;
-          if (doneCount === 2) {
-            done();
+        , globalRes = {          
+            locals: {
+              set compactJs(func) {
+                func().should.eql(['/global.js']);
+                doneCount += 1;
+                if (doneCount === 2) {
+                  done();
+                }      
+              }
+            }
           }
-        };
+        , profileRes = {          
+            locals: {
+              set compactJs(func) {
+                func().should.eql(['/profile.js']);
+                doneCount += 1;
+                if (doneCount === 2) {
+                  done();
+                }
+              }
+            }
+          }
 
       compact.middleware(['global'])(req, globalRes, function() {
-        profileRes.locals = function(helper) {
-          helper.compactJs().should.eql(['/profile.js']);
-          doneCount += 1;
-          if (doneCount === 2) {
-            done();
-          }
-        };
         compact.middleware(['profile'])(req, profileRes, function() {});
       });
-
-
     });
 
     it('should give higher precedence to the added srcPath', function (done) {
@@ -456,9 +477,11 @@ describe('compact.js', function() {
 
       var req
         , res = {
-          locals: function(helper) {
-            helper.compactJs()[0].should.not.equal(helper.compactJs()[1]);
-            done();
+          locals: {
+            set compactJs(func) {
+              func()[0].should.not.equal(func()[1]);
+              done();
+            }
           }
         };
 
@@ -482,9 +505,11 @@ describe('compact.js', function() {
 
       var req
         , res = {
-          locals: function(helper) {
-            helper.compactJs()[0].should.not.equal(helper.compactJs()[1]);
-            done();
+          locals: {
+            set compactJs(func) {
+              func()[0].should.not.equal(func()[1]);
+              done();
+            }
           }
         };
 
