@@ -1,7 +1,7 @@
 # compact.js
 A simple JavaScript compacting middleware for express
 
-[![build status](https://secure.travis-ci.org/serby/compact.png)](http://travis-ci.org/serby/compact)
+[![build status](https://secure.travis-ci.org/serby/compact.png)](http://travis-ci.org/serby/compact) [![Greenkeeper badge](https://badges.greenkeeper.io/serby/compact.svg)](https://greenkeeper.io/)
 
 ## Installation
 
